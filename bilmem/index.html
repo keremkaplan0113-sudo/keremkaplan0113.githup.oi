@@ -1,0 +1,1795 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Gezgin Dünya 🌍</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #07111f;
+    color: white;
+}
+
+/* ÜST MENÜ */
+header {
+    background: linear-gradient(135deg, #071a2d, #0b4f6c);
+    padding: 25px;
+    text-align: center;
+    border-bottom: 2px solid #1da1f2;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 38px;
+}
+
+header p {
+    color: #ccecff;
+}
+
+/* ARAMA */
+.search-area {
+    padding: 25px;
+    text-align: center;
+    background: #091827;
+}
+
+.search-box {
+    width: min(700px, 90%);
+    padding: 16px 20px;
+    border-radius: 30px;
+    border: 2px solid #1da1f2;
+    background: #101f31;
+    color: white;
+    font-size: 18px;
+    outline: none;
+}
+
+.search-box:focus {
+    box-shadow: 0 0 15px rgba(29,161,242,.5);
+}
+
+/* BUTONLAR */
+.categories {
+    text-align: center;
+    padding: 15px;
+}
+
+.filter-btn {
+    border: none;
+    padding: 11px 18px;
+    margin: 5px;
+    border-radius: 20px;
+    cursor: pointer;
+    background: #12395a;
+    color: white;
+    transition: .2s;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+    background: #1da1f2;
+    transform: scale(1.05);
+}
+
+/* ŞEHİRLER */
+.container {
+    width: 92%;
+    max-width: 1300px;
+    margin: auto;
+    padding: 20px 0 50px;
+}
+
+.section-title {
+    margin-top: 25px;
+    border-left: 5px solid #1da1f2;
+    padding-left: 12px;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 18px;
+}
+
+.card {
+    background: linear-gradient(145deg, #10253a, #0a1726);
+    border: 1px solid #234761;
+    border-radius: 18px;
+    padding: 20px;
+    cursor: pointer;
+    transition: .25s;
+    min-height: 190px;
+}
+
+.card:hover {
+    transform: translateY(-7px);
+    border-color: #1da1f2;
+    box-shadow: 0 10px 25px rgba(0,0,0,.35);
+}
+
+.card .emoji {
+    font-size: 40px;
+}
+
+.card h3 {
+    margin: 10px 0 5px;
+}
+
+.card p {
+    color: #b9cad7;
+    line-height: 1.5;
+}
+
+.card .country {
+    color: #55c7ff;
+    font-size: 14px;
+}
+
+/* DETAY */
+.detail {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    inset: 0;
+    background: rgba(0,0,0,.75);
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.detail-box {
+    background: #0c1d2e;
+    border: 2px solid #1da1f2;
+    border-radius: 22px;
+    max-width: 700px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 30px;
+    position: relative;
+    box-shadow: 0 0 40px rgba(29,161,242,.25);
+}
+
+.close {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    font-size: 30px;
+    cursor: pointer;
+    color: #aaa;
+}
+
+.close:hover {
+    color: white;
+}
+
+.detail-emoji {
+    font-size: 70px;
+}
+
+.detail-box h2 {
+    font-size: 35px;
+    margin: 10px 0;
+}
+
+.info {
+    background: #12283d;
+    border-radius: 12px;
+    padding: 15px;
+    margin: 12px 0;
+}
+
+.info strong {
+    color: #55c7ff;
+}
+
+.map-button {
+    display: inline-block;
+    background: #1da1f2;
+    color: white;
+    padding: 13px 20px;
+    border-radius: 25px;
+    text-decoration: none;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.map-button:hover {
+    background: #0d8ddd;
+}
+
+/* SONUÇ YOK */
+.no-result {
+    display: none;
+    text-align: center;
+    padding: 50px 20px;
+    background: #102030;
+    border-radius: 20px;
+    margin-top: 20px;
+}
+
+.no-result span {
+    font-size: 60px;
+}
+
+/* FOOTER */
+footer {
+    background: #050c14;
+    text-align: center;
+    padding: 30px;
+    color: #9db2c2;
+}
+
+@media(max-width:600px) {
+    header h1 {
+        font-size: 28px;
+    }
+
+    .detail-box {
+        padding: 22px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🌍 Gezgin Dünya</h1>
+    <p>Türkiye'nin 81 ili ve dünyanın farklı ülkelerini keşfet!</p>
+</header>
+
+<section class="search-area">
+
+    <input
+        type="text"
+        id="search"
+        class="search-box"
+        placeholder="🔎 Şehir veya ülke ara... Örn: Karabük, İstanbul, Fransa"
+    >
+
+    <div class="categories">
+        <button class="filter-btn active" onclick="filterCards('all', this)">
+            🌍 Hepsi
+        </button>
+
+        <button class="filter-btn" onclick="filterCards('turkiye', this)">
+            🇹🇷 Türkiye
+        </button>
+
+        <button class="filter-btn" onclick="filterCards('dunya', this)">
+            🌎 Dünya
+        </button>
+    </div>
+
+</section>
+
+<main class="container">
+
+    <h2 class="section-title">📍 Keşfet</h2>
+
+    <div id="cards" class="cards"></div>
+
+    <div id="noResult" class="no-result">
+        <span>🔎</span>
+        <h2>Sonuç bulunamadı</h2>
+        <p>Şehir veya ülke adını farklı yazmayı deneyebilirsin.</p>
+    </div>
+
+</main>
+
+<!-- DETAY PENCERESİ -->
+
+<div id="detail" class="detail">
+
+    <div class="detail-box">
+
+        <span class="close" onclick="closeDetail()">×</span>
+
+        <div id="detailContent"></div>
+
+    </div>
+
+</div>
+
+<footer>
+    🌱 Gezgin Dünya Projesi
+    <br><br>
+    Türkiye'nin 81 ili ve dünya şehirleri
+</footer>
+
+
+<script>
+
+/* =====================================================
+   TÜRKİYE'NİN 81 İLİ
+===================================================== */
+
+const turkiye = [
+
+{
+name:"Adana",
+emoji:"🌴",
+region:"Akdeniz Bölgesi",
+description:"Seyhan Nehri, kebabı ve sıcak iklimiyle ünlüdür.",
+places:"Taş Köprü, Sabancı Merkez Camii, Seyhan Nehri",
+nature:"Seyhan Nehri ve çevresindeki doğal alanlar",
+lat:37.0000,
+lng:35.3213
+},
+
+{
+name:"Adıyaman",
+emoji:"🏔️",
+region:"Güneydoğu Anadolu",
+description:"Nemrut Dağı ile dünyanın en önemli tarihi alanlarından birine sahiptir.",
+places:"Nemrut Dağı, Cendere Köprüsü, Perre Antik Kenti",
+nature:"Nemrut Dağı",
+lat:37.7648,
+lng:38.2786
+},
+
+{
+name:"Afyonkarahisar",
+emoji:"🏰",
+region:"Ege Bölgesi",
+description:"Kaplıcaları, kalesi ve yöresel lezzetleriyle bilinir.",
+places:"Afyon Kalesi, Frig Vadisi, Ulu Camii",
+nature:"Frig Vadisi",
+lat:38.7569,
+lng:30.5387
+},
+
+{
+name:"Ağrı",
+emoji:"🏔️",
+region:"Doğu Anadolu",
+description:"Türkiye'nin en yüksek dağı olan Ağrı Dağı burada bulunur.",
+places:"Ağrı Dağı, İshak Paşa Sarayı, Doğubayazıt",
+nature:"Ağrı Dağı",
+lat:39.7191,
+lng:43.0503
+},
+
+{
+name:"Amasya",
+emoji:"🏞️",
+region:"Karadeniz Bölgesi",
+description:"Yeşilırmak kıyısındaki tarihi evleriyle ünlüdür.",
+places:"Kral Kaya Mezarları, Amasya Evleri, Yalıboyu",
+nature:"Yeşilırmak",
+lat:40.6500,
+lng:35.8333
+},
+
+{
+name:"Ankara",
+emoji:"🏛️",
+region:"İç Anadolu",
+description:"Türkiye'nin başkentidir ve Anıtkabir burada bulunur.",
+places:"Anıtkabir, Ankara Kalesi, Anadolu Medeniyetleri Müzesi",
+nature:"Eymir Gölü",
+lat:39.9334,
+lng:32.8597
+},
+
+{
+name:"Antalya",
+emoji:"🏖️",
+region:"Akdeniz Bölgesi",
+description:"Denizi, tarihi yapıları ve doğal güzellikleriyle Türkiye'nin en önemli turizm merkezlerindendir.",
+places:"Kaleiçi, Düden Şelalesi, Aspendos",
+nature:"Düden Şelalesi ve Akdeniz kıyıları",
+lat:36.8969,
+lng:30.7133
+},
+
+{
+name:"Artvin",
+emoji:"🌲",
+region:"Karadeniz Bölgesi",
+description:"Dağları, ormanları ve yaylalarıyla doğa turizmi açısından çok zengindir.",
+places:"Borçka Karagöl, Şavşat, Macahel",
+nature:"Karagöl",
+lat:41.1828,
+lng:41.8183
+},
+
+{
+name:"Aydın",
+emoji:"🏛️",
+region:"Ege Bölgesi",
+description:"Antik kentleri ve Ege kıyılarıyla tanınır.",
+places:"Efes, Didim, Kuşadası",
+nature:"Dilek Yarımadası",
+lat:37.8444,
+lng:27.8458
+},
+
+{
+name:"Balıkesir",
+emoji:"🌊",
+region:"Marmara Bölgesi",
+description:"Marmara ve Ege denizlerine kıyısı bulunan bir şehirdir.",
+places:"Ayvalık, Cunda Adası, Kazdağları",
+nature:"Kazdağları",
+lat:39.6484,
+lng:27.8826
+},
+
+{
+name:"Bilecik",
+emoji:"🏰",
+region:"Marmara Bölgesi",
+description:"Osmanlı tarihinin önemli merkezlerinden biridir.",
+places:"Şeyh Edebali Türbesi, Söğüt, Ertuğrul Gazi Türbesi",
+nature:"Pelitözü Gölü",
+lat:40.0567,
+lng:30.0665
+},
+
+{
+name:"Bingöl",
+emoji:"🏔️",
+region:"Doğu Anadolu",
+description:"Dağlık yapısı ve doğal güzellikleriyle bilinir.",
+places:"Yüzen Ada, Bingöl Dağları",
+nature:"Yüzen Ada",
+lat:38.8854,
+lng:40.4966
+},
+
+{
+name:"Bitlis",
+emoji:"🏔️",
+region:"Doğu Anadolu",
+description:"Tarihi yapıları ve Van Gölü çevresindeki doğal güzellikleriyle tanınır.",
+places:"Bitlis Kalesi, Ahlat, Nemrut Krater Gölü",
+nature:"Nemrut Krater Gölü",
+lat:38.4000,
+lng:42.1167
+},
+
+{
+name:"Bolu",
+emoji:"🌲",
+region:"Karadeniz Bölgesi",
+description:"Ormanları, gölleri ve doğa parklarıyla ünlüdür.",
+places:"Abant Gölü, Gölcük, Yedigöller",
+nature:"Abant ve Yedigöller",
+lat:40.7350,
+lng:31.6061
+},
+
+{
+name:"Burdur",
+emoji:"🦆",
+region:"Akdeniz Bölgesi",
+description:"Gölleri ve antik kentleriyle bilinir.",
+places:"Salda Gölü, Sagalassos, Kibyra",
+nature:"Salda Gölü",
+lat:37.7203,
+lng:30.2908
+},
+
+{
+name:"Bursa",
+emoji:"🕌",
+region:"Marmara Bölgesi",
+description:"Osmanlı'nın ilk başkentlerinden biridir.",
+places:"Uludağ, Ulu Camii, Cumalıkızık",
+nature:"Uludağ",
+lat:40.1950,
+lng:29.0600
+},
+
+{
+name:"Çanakkale",
+emoji:"⚓",
+region:"Marmara Bölgesi",
+description:"Çanakkale Savaşları ve tarihi alanlarıyla tanınır.",
+places:"Truva, Şehitler Abidesi, Bozcaada",
+nature:"Bozcaada",
+lat:40.1553,
+lng:26.4142
+},
+
+{
+name:"Çankırı",
+emoji:"🏞️",
+region:"İç Anadolu",
+description:"Tuz mağarası ve tarihi yapılarıyla bilinir.",
+places:"Çankırı Tuz Mağarası, Ilgaz",
+nature:"Ilgaz Dağı",
+lat:40.6000,
+lng:33.6167
+},
+
+{
+name:"Çorum",
+emoji:"🏺",
+region:"Karadeniz Bölgesi",
+description:"Hitit uygarlığının önemli merkezlerinden biridir.",
+places:"Hattuşa, Yazılıkaya, Alacahöyük",
+nature:"Kızılırmak çevresi",
+lat:40.5506,
+lng:34.9556
+},
+
+{
+name:"Denizli",
+emoji:"♨️",
+region:"Ege Bölgesi",
+description:"Pamukkale travertenleriyle dünyaca tanınır.",
+places:"Pamukkale, Hierapolis, Laodikya",
+nature:"Pamukkale",
+lat:37.7765,
+lng:29.0864
+},
+
+{
+name:"Diyarbakır",
+emoji:"🧱",
+region:"Güneydoğu Anadolu",
+description:"Tarihi surları ve kültürel mirasıyla ünlüdür.",
+places:"Diyarbakır Surları, Ulu Camii, Hevsel Bahçeleri",
+nature:"Hevsel Bahçeleri",
+lat:37.9144,
+lng:40.2306
+},
+
+{
+name:"Edirne",
+emoji:"🕌",
+region:"Marmara Bölgesi",
+description:"Selimiye Camii ve tarihi geçmişiyle tanınır.",
+places:"Selimiye Camii, Meriç Köprüsü, Karaağaç",
+nature:"Meriç Nehri",
+lat:41.6772,
+lng:26.5557
+},
+
+{
+name:"Elazığ",
+emoji:"🏞️",
+region:"Doğu Anadolu",
+description:"Hazar Gölü ve tarihi Harput bölgesiyle bilinir.",
+places:"Harput, Hazar Gölü, Keban Barajı",
+nature:"Hazar Gölü",
+lat:38.6810,
+lng:39.2264
+},
+
+{
+name:"Erzincan",
+emoji:"🏔️",
+region:"Doğu Anadolu",
+description:"Dağları, vadileri ve doğal alanlarıyla tanınır.",
+places:"Girlevik Şelalesi, Kemaliye, Karanlık Kanyon",
+nature:"Girlevik Şelalesi",
+lat:39.7500,
+lng:39.5000
+},
+
+{
+name:"Erzurum",
+emoji:"⛷️",
+region:"Doğu Anadolu",
+description:"Kış sporları ve tarihi yapılarıyla ünlüdür.",
+places:"Palandöken, Çifte Minareli Medrese, Tortum Şelalesi",
+nature:"Palandöken",
+lat:39.9043,
+lng:41.2679
+},
+
+{
+name:"Eskişehir",
+emoji:"🚋",
+region:"İç Anadolu",
+description:"Porsuk Çayı, müzeleri ve genç nüfusuyla bilinir.",
+places:"Odunpazarı, Porsuk Çayı, Sazova Parkı",
+nature:"Porsuk Çayı",
+lat:39.7767,
+lng:30.5206
+},
+
+{
+name:"Gaziantep",
+emoji:"🥘",
+region:"Güneydoğu Anadolu",
+description:"Baklavası ve zengin mutfağıyla dünyaca tanınır.",
+places:"Zeugma Müzesi, Gaziantep Kalesi, Bakırcılar Çarşısı",
+nature:"Alleben Göleti",
+lat:37.0662,
+lng:37.3833
+},
+
+{
+name:"Giresun",
+emoji:"🌊",
+region:"Karadeniz Bölgesi",
+description:"Karadeniz kıyıları ve yaylalarıyla tanınır.",
+places:"Giresun Adası, Kümbet Yaylası, Giresun Kalesi",
+nature:"Kümbet Yaylası",
+lat:40.9128,
+lng:38.3895
+},
+
+{
+name:"Gümüşhane",
+emoji:"🏔️",
+region:"Karadeniz Bölgesi",
+description:"Dağları, mağaraları ve tarihi yapılarıyla bilinir.",
+places:"Karaca Mağarası, Tomara Şelalesi, Santa Harabeleri",
+nature:"Tomara Şelalesi",
+lat:40.4600,
+lng:39.4800
+},
+
+{
+name:"Hakkari",
+emoji:"⛰️",
+region:"Doğu Anadolu",
+description:"Yüksek dağları ve doğal güzellikleriyle tanınır.",
+places:"Cilo Dağları, Sat Gölleri",
+nature:"Cilo Dağları",
+lat:37.5744,
+lng:43.7408
+},
+
+{
+name:"Hatay",
+emoji:"🕌",
+region:"Akdeniz Bölgesi",
+description:"Farklı kültürlerin buluştuğu tarihi bir şehirdir.",
+places:"Antakya, St. Pierre Kilisesi, Titus Tüneli",
+nature:"Harbiye Şelaleleri",
+lat:36.2021,
+lng:36.1605
+},
+
+{
+name:"Isparta",
+emoji:"🌹",
+region:"Akdeniz Bölgesi",
+description:"Gülleri ve gölleriyle tanınır.",
+places:"Eğirdir Gölü, Davraz, Kovada Gölü",
+nature:"Eğirdir Gölü",
+lat:37.7648,
+lng:30.5566
+},
+
+{
+name:"Mersin",
+emoji:"🌴",
+region:"Akdeniz Bölgesi",
+description:"Uzun sahil şeridi ve tarihi kalıntılarıyla ünlüdür.",
+places:"Kızkalesi, Cennet-Cehennem, Anamur",
+nature:"Kızkalesi",
+lat:36.8121,
+lng:34.6415
+},
+
+{
+name:"İstanbul",
+emoji:"🌉",
+region:"Marmara Bölgesi",
+description:"Avrupa ve Asya kıtalarını birleştiren tarihi metropoldür.",
+places:"Ayasofya, Topkapı Sarayı, Boğaz",
+nature:"İstanbul Boğazı",
+lat:41.0082,
+lng:28.9784
+},
+
+{
+name:"İzmir",
+emoji:"🌊",
+region:"Ege Bölgesi",
+description:"Ege Denizi kıyısında modern ve tarihi bir şehirdir.",
+places:"Efes, Saat Kulesi, Kordon",
+nature:"İzmir Körfezi",
+lat:38.4237,
+lng:27.1428
+},
+
+{
+name:"Kars",
+emoji:"🏰",
+region:"Doğu Anadolu",
+description:"Ani Harabeleri ve tarihi dokusuyla tanınır.",
+places:"Ani Harabeleri, Kars Kalesi, Sarıkamış",
+nature:"Sarıkamış ormanları",
+lat:40.6013,
+lng:43.0975
+},
+
+{
+name:"Kastamonu",
+emoji:"🌲",
+region:"Karadeniz Bölgesi",
+description:"Ormanları ve tarihi yapılarıyla bilinir.",
+places:"Ilgaz Dağı, Valla Kanyonu, Kastamonu Kalesi",
+nature:"Valla Kanyonu",
+lat:41.3887,
+lng:33.7827
+},
+
+{
+name:"Kayseri",
+emoji:"🏔️",
+region:"İç Anadolu",
+description:"Erciyes Dağı ve tarihi Kapadokya çevresiyle tanınır.",
+places:"Erciyes, Kayseri Kalesi, Kapuzbaşı Şelaleleri",
+nature:"Erciyes Dağı",
+lat:38.7225,
+lng:35.4875
+},
+
+{
+name:"Kırklareli",
+emoji:"🌳",
+region:"Marmara Bölgesi",
+description:"Istranca Dağları ve longoz ormanlarıyla ünlüdür.",
+places:"İğneada, Dupnisa Mağarası, Longoz Ormanları",
+nature:"İğneada Longozları",
+lat:41.7351,
+lng:27.2252
+},
+
+{
+name:"Kırşehir",
+emoji:"🏞️",
+region:"İç Anadolu",
+description:"Tarihi ve termal kaynaklarıyla bilinir.",
+places:"Cacabey Medresesi, Ahi Evran Külliyesi",
+nature:"Kaman çevresi",
+lat:39.1458,
+lng:34.1639
+},
+
+{
+name:"Kocaeli",
+emoji:"🏭",
+region:"Marmara Bölgesi",
+description:"Sanayi ve doğal güzelliklerin bir arada bulunduğu şehirdir.",
+places:"Ormanya, Kartepe, Seka Park",
+nature:"Kartepe",
+lat:40.8533,
+lng:29.8815
+},
+
+{
+name:"Konya",
+emoji:"🕌",
+region:"İç Anadolu",
+description:"Mevlana ve geniş bozkırlarıyla tanınır.",
+places:"Mevlana Müzesi, Alaeddin Tepesi, Çatalhöyük",
+nature:"Beyşehir Gölü",
+lat:37.8746,
+lng:32.4932
+},
+
+{
+name:"Kütahya",
+emoji:"🏺",
+region:"Ege Bölgesi",
+description:"Çini sanatının önemli merkezlerinden biridir.",
+places:"Kütahya Kalesi, Aizanoi, Frig Vadisi",
+nature:"Murat Dağı",
+lat:39.4167,
+lng:29.9833
+},
+
+{
+name:"Malatya",
+emoji:"🍑",
+region:"Doğu Anadolu",
+description:"Kayısısıyla dünyaca ünlüdür.",
+places:"Arslantepe, Levent Vadisi, Battalgazi",
+nature:"Levent Vadisi",
+lat:38.3552,
+lng:38.3095
+},
+
+{
+name:"Manisa",
+emoji:"🍇",
+region:"Ege Bölgesi",
+description:"Üzüm bağları ve Spil Dağı ile bilinir.",
+places:"Spil Dağı, Sardes, Manisa Kalesi",
+nature:"Spil Dağı",
+lat:38.6191,
+lng:27.4289
+},
+
+{
+name:"Kahramanmaraş",
+emoji:"🍨",
+region:"Akdeniz Bölgesi",
+description:"Dondurması ve tarihi yapılarıyla ünlüdür.",
+places:"Maraş Kalesi, Germanicia, Tekir Yaylası",
+nature:"Tekir Yaylası",
+lat:37.5753,
+lng:36.9228
+},
+
+{
+name:"Mardin",
+emoji:"🏜️",
+region:"Güneydoğu Anadolu",
+description:"Taş evleri ve Mezopotamya manzarasıyla tanınır.",
+places:"Mardin Eski Şehir, Deyrulzafaran, Kasımiye Medresesi",
+nature:"Mezopotamya Ovası",
+lat:37.3212,
+lng:40.7245
+},
+
+{
+name:"Muğla",
+emoji:"🏝️",
+region:"Ege Bölgesi",
+description:"Bodrum, Marmaris ve Fethiye gibi turizm merkezlerine ev sahipliği yapar.",
+places:"Bodrum, Fethiye, Marmaris",
+nature:"Ölüdeniz",
+lat:37.2153,
+lng:28.3636
+},
+
+{
+name:"Muş",
+emoji:"🌾",
+region:"Doğu Anadolu",
+description:"Geniş ovaları ve dağlık alanlarıyla bilinir.",
+places:"Muş Ovası, Malazgirt",
+nature:"Muş Ovası",
+lat:38.9462,
+lng:41.7539
+},
+
+{
+name:"Nevşehir",
+emoji:"🎈",
+region:"İç Anadolu",
+description:"Kapadokya'nın merkezlerinden biridir.",
+places:"Göreme, Uçhisar, Derinkuyu",
+nature:"Kapadokya vadileri",
+lat:38.6244,
+lng:34.7239
+},
+
+{
+name:"Niğde",
+emoji:"🏔️",
+region:"İç Anadolu",
+description:"Aladağlar ve tarihi yapılarıyla tanınır.",
+places:"Aladağlar, Gümüşler Manastırı",
+nature:"Aladağlar",
+lat:37.9667,
+lng:34.6833
+},
+
+{
+name:"Ordu",
+emoji:"🌊",
+region:"Karadeniz Bölgesi",
+description:"Karadeniz kıyıları ve yaylalarıyla ünlüdür.",
+places:"Boztepe, Perşembe Yaylası, Yason Burnu",
+nature:"Boztepe",
+lat:40.9839,
+lng:37.8764
+},
+
+{
+name:"Rize",
+emoji:"🍃",
+region:"Karadeniz Bölgesi",
+description:"Çay bahçeleri ve yemyeşil yaylalarıyla tanınır.",
+places:"Ayder Yaylası, Zilkale, Fırtına Vadisi",
+nature:"Fırtına Vadisi",
+lat:41.0201,
+lng:40.5234
+},
+
+{
+name:"Sakarya",
+emoji:"🌳",
+region:"Marmara Bölgesi",
+description:"Gölleri, nehirleri ve doğal alanlarıyla bilinir.",
+places:"Sapanca Gölü, Taraklı, Acarlar Longozu",
+nature:"Sapanca Gölü",
+lat:40.7569,
+lng:30.3781
+},
+
+{
+name:"Samsun",
+emoji:"🌊",
+region:"Karadeniz Bölgesi",
+description:"Karadeniz kıyısındaki önemli şehirlerden biridir.",
+places:"Bandırma Vapuru, Amisos Tepesi, Atatürk Anıtı",
+nature:"Kızılırmak Deltası",
+lat:41.2867,
+lng:36.33
+},
+
+{
+name:"Siirt",
+emoji:"🌄",
+region:"Güneydoğu Anadolu",
+description:"Dağları, vadileri ve tarihi yapılarıyla bilinir.",
+places:"Tillo, Botan Vadisi, Veysel Karani",
+nature:"Botan Vadisi",
+lat:37.9333,
+lng:41.95
+},
+
+{
+name:"Sinop",
+emoji:"⚓",
+region:"Karadeniz Bölgesi",
+description:"Karadeniz'in kuzey ucunda yer alan tarihi bir liman şehridir.",
+places:"Sinop Cezaevi, Hamsilos, Tarihi Liman",
+nature:"Hamsilos Koyu",
+lat:42.0231,
+lng:35.1531
+},
+
+{
+name:"Sivas",
+emoji:"🏔️",
+region:"İç Anadolu",
+description:"Geniş coğrafyası ve tarihi yapılarıyla bilinir.",
+places:"Divriği Ulu Camii, Gök Medrese, Kangal",
+nature:"Kangal çevresi",
+lat:39.7477,
+lng:37.0179
+},
+
+{
+name:"Şanlıurfa",
+emoji:"🕌",
+region:"Güneydoğu Anadolu",
+description:"Göbeklitepe ve tarihi geçmişiyle dünyanın önemli şehirlerindendir.",
+places:"Göbeklitepe, Balıklıgöl, Harran",
+nature:"Harran Ovası",
+lat:37.1674,
+lng:38.7955
+},
+
+{
+name:"Şırnak",
+emoji:"🏔️",
+region:"Güneydoğu Anadolu",
+description:"Dağlık bölgeleri ve doğal güzellikleriyle bilinir.",
+places:"Cudi Dağı, Kasrik",
+nature:"Cudi Dağı",
+lat:37.5167,
+lng:42.45
+},
+
+{
+name:"Tekirdağ",
+emoji:"🌊",
+region:"Marmara Bölgesi",
+description:"Marmara Denizi kıyısında yer alan önemli bir şehirdir.",
+places:"Şarköy, Uçmakdere, Rakoczi Müzesi",
+nature:"Uçmakdere",
+lat:40.9833,
+lng:27.5167
+},
+
+{
+name:"Tokat",
+emoji:"🏰",
+region:"Karadeniz Bölgesi",
+description:"Tarihi kaleleri ve doğal alanlarıyla tanınır.",
+places:"Tokat Kalesi, Ballıca Mağarası, Kaz Gölü",
+nature:"Ballıca Mağarası",
+lat:40.3167,
+lng:36.55
+},
+
+{
+name:"Trabzon",
+emoji:"🏞️",
+region:"Karadeniz Bölgesi",
+description:"Sümela Manastırı ve yemyeşil doğasıyla ünlüdür.",
+places:"Sümela Manastırı, Uzungöl, Atatürk Köşkü",
+nature:"Uzungöl",
+lat:41.0015,
+lng:39.7178
+},
+
+{
+name:"Tunceli",
+emoji:"🏔️",
+region:"Doğu Anadolu",
+description:"Dağları, vadileri ve Munzur Milli Parkı ile tanınır.",
+places:"Munzur Vadisi, Ovacık",
+nature:"Munzur Vadisi",
+lat:39.1079,
+lng:39.5401
+},
+
+{
+name:"Uşak",
+emoji:"🏺",
+region:"Ege Bölgesi",
+description:"Tarihi eserleri ve doğal alanlarıyla bilinir.",
+places:"Ulubey Kanyonu, Blaundus Antik Kenti",
+nature:"Ulubey Kanyonu",
+lat:38.6823,
+lng:29.4082
+},
+
+{
+name:"Van",
+emoji:"🏔️",
+region:"Doğu Anadolu",
+description:"Van Gölü ve Akdamar Adası ile ünlüdür.",
+places:"Van Gölü, Akdamar Adası, Van Kalesi",
+nature:"Van Gölü",
+lat:38.5012,
+lng:43.373
+},
+
+{
+name:"Yozgat",
+emoji:"🌲",
+region:"İç Anadolu",
+description:"Çamlık Milli Parkı ve tarihi alanlarıyla bilinir.",
+places:"Çamlık Milli Parkı, Saat Kulesi",
+nature:"Çamlık Milli Parkı",
+lat:39.8181,
+lng:34.8147
+},
+
+{
+name:"Zonguldak",
+emoji:"⛏️",
+region:"Karadeniz Bölgesi",
+description:"Madenleri ve Karadeniz kıyılarıyla tanınır.",
+places:"Gökgöl Mağarası, Filyos, Cehennemağzı Mağaraları",
+nature:"Gökgöl Mağarası",
+lat:41.4564,
+lng:31.7987
+},
+
+{
+name:"Aksaray",
+emoji:"🏜️",
+region:"İç Anadolu",
+description:"Kapadokya'nın önemli bölgelerinden biridir.",
+places:"Ihlara Vadisi, Sultanhanı, Manastır Vadisi",
+nature:"Ihlara Vadisi",
+lat:38.3687,
+lng:34.037
+},
+
+{
+name:"Bayburt",
+emoji:"🏰",
+region:"Karadeniz Bölgesi",
+description:"Tarihi Bayburt Kalesi ve doğal alanlarıyla bilinir.",
+places:"Bayburt Kalesi, Baksı Müzesi",
+nature:"Çoruh Nehri",
+lat:40.2552,
+lng:40.2249
+},
+
+{
+name:"Karaman",
+emoji:"🏺",
+region:"İç Anadolu",
+description:"Tarihi mağaraları ve antik alanlarıyla tanınır.",
+places:"Karaman Kalesi, Binbir Kilise",
+nature:"Taşkale",
+lat:37.1811,
+lng:33.215
+},
+
+{
+name:"Kırıkkale",
+emoji:"🌳",
+region:"İç Anadolu",
+description:"Kızılırmak çevresindeki doğal alanlarıyla bilinir.",
+places:"Çeşnigir Köprüsü, Sulu Mağara",
+nature:"Kızılırmak",
+lat:39.8468,
+lng:33.5153
+},
+
+{
+name:"Batman",
+emoji:"🏞️",
+region:"Güneydoğu Anadolu",
+description:"Hasankeyf ve tarihi Dicle Vadisi ile tanınır.",
+places:"Hasankeyf, Zeynel Bey Türbesi",
+nature:"Dicle Vadisi",
+lat:37.8812,
+lng:41.1351
+},
+
+{
+name:"Kilis",
+emoji:"🌿",
+region:"Güneydoğu Anadolu",
+description:"Zeytinlikleri ve tarihi dokusuyla bilinir.",
+places:"Kilis tarihi evleri, Ravanda Kalesi",
+nature:"Zeytinlikler",
+lat:36.7184,
+lng:37.1212
+},
+
+{
+name:"Osmaniye",
+emoji:"🌲",
+region:"Akdeniz Bölgesi",
+description:"Çukurova'nın doğusunda yer alan doğal güzelliklere sahip bir şehirdir.",
+places:"Karatepe-Aslantaş, Kastabala",
+nature:"Karatepe",
+lat:37.0746,
+lng:36.2478
+},
+
+{
+name:"Düzce",
+emoji:"🌲",
+region:"Karadeniz Bölgesi",
+description:"Şelaleleri, yaylaları ve ormanlarıyla ünlüdür.",
+places:"Akçakoca, Samandere Şelalesi, Aydınpınar",
+nature:"Samandere Şelalesi",
+lat:40.8438,
+lng:31.1565
+},
+
+{
+name:"Ardahan",
+emoji:"🏔️",
+region:"Doğu Anadolu",
+description:"Yüksek rakımlı doğal alanları ve gölleriyle bilinir.",
+places:"Çıldır Gölü, Ardahan Kalesi",
+nature:"Çıldır Gölü",
+lat:41.1105,
+lng:42.7022
+},
+
+{
+name:"Iğdır",
+emoji:"🌄",
+region:"Doğu Anadolu",
+description:"Ağrı Dağı'nın kuzeyinde bulunan verimli bir ovaya sahiptir.",
+places:"Ağrı Dağı manzarası, Tuzluca",
+nature:"Ağrı Dağı",
+lat:39.9237,
+lng:44.045
+},
+
+{
+name:"Yalova",
+emoji:"🌳",
+region:"Marmara Bölgesi",
+description:"Termal kaynakları ve ormanlarıyla tanınır.",
+places:"Yalova Termal, Çınarcık",
+nature:"Sudüşen Şelalesi",
+lat:40.65,
+lng:29.2667
+},
+
+{
+name:"Karabük",
+emoji:"🏭",
+region:"Karadeniz Bölgesi",
+description:"Safranbolu evleri ve tarihi dokusuyla ünlüdür.",
+places:"Safranbolu, Bulak Mağarası, Kristal Teras",
+nature:"Tokatlı Kanyonu",
+lat:41.1956,
+lng:32.6289
+},
+
+{
+name:"Kilis",
+emoji:"🌿",
+region:"Güneydoğu Anadolu",
+description:"Tarihi yapıları ve zeytinlikleriyle tanınır.",
+places:"Ravanda Kalesi, tarihi Kilis evleri",
+nature:"Zeytinlikler",
+lat:36.7184,
+lng:37.1212
+},
+
+{
+name:"Bartın",
+emoji:"🌊",
+region:"Karadeniz Bölgesi",
+description:"Amasra ve yemyeşil doğasıyla ünlüdür.",
+places:"Amasra, Kemere Köprüsü, İnkumu",
+nature:"İnkumu",
+lat:41.6344,
+lng:32.3375
+},
+
+{
+name:"Kars",
+emoji:"🏰",
+region:"Doğu Anadolu",
+description:"Ani Harabeleri ve kış manzaralarıyla bilinir.",
+places:"Ani Harabeleri, Kars Kalesi",
+nature:"Sarıkamış",
+lat:40.6013,
+lng:43.0975
+},
+
+{
+name:"Karaman",
+emoji:"🏺",
+region:"İç Anadolu",
+description:"Tarihi eserleri ve mağaralarıyla tanınır.",
+places:"Taşkale, Binbir Kilise",
+nature:"Taşkale",
+lat:37.1811,
+lng:33.215
+}
+
+];
+
+
+/* =====================================================
+   DÜNYA ÜLKELERİ
+===================================================== */
+
+const dunya = [
+
+{
+name:"Fransa",
+emoji:"🇫🇷",
+country:"Avrupa",
+region:"Batı Avrupa",
+description:"Eyfel Kulesi, sanat, tarih ve mutfağıyla dünyaca ünlü bir ülkedir.",
+places:"Paris, Eyfel Kulesi, Louvre Müzesi, Nice",
+nature:"Alpler ve Akdeniz kıyıları",
+lat:48.8566,
+lng:2.3522
+},
+
+{
+name:"İsviçre",
+emoji:"🇨🇭",
+country:"Avrupa",
+region:"Orta Avrupa",
+description:"Alpleri, gölleri ve doğal manzaralarıyla ünlüdür.",
+places:"Zürih, Cenevre, Zermatt",
+nature:"İsviçre Alpleri",
+lat:46.8182,
+lng:8.2275
+},
+
+{
+name:"İtalya",
+emoji:"🇮🇹",
+country:"Avrupa",
+region:"Güney Avrupa",
+description:"Roma, Venedik ve tarihi eserleriyle dünyanın en popüler ülkelerinden biridir.",
+places:"Roma, Venedik, Kolezyum, Floransa",
+nature:"Dolomitler ve Amalfi kıyıları",
+lat:41.9028,
+lng:12.4964
+},
+
+{
+name:"Almanya",
+emoji:"🇩🇪",
+country:"Avrupa",
+region:"Orta Avrupa",
+description:"Tarihi şehirleri, kaleleri ve modern şehirleriyle tanınır.",
+places:"Berlin, Münih, Köln",
+nature:"Bavyera Alpleri",
+lat:52.52,
+lng:13.405
+},
+
+{
+name:"İspanya",
+emoji:"🇪🇸",
+country:"Avrupa",
+region:"Güney Avrupa",
+description:"Plajları, tarihi şehirleri ve kültürüyle ünlüdür.",
+places:"Madrid, Barselona, Sevilla",
+nature:"Kanarya Adaları",
+lat:40.4168,
+lng:-3.7038
+},
+
+{
+name:"İngiltere",
+emoji:"🇬🇧",
+country:"Avrupa",
+region:"Batı Avrupa",
+description:"Londra, tarihi yapıları ve kraliyet geçmişiyle tanınır.",
+places:"Londra, Big Ben, Tower Bridge",
+nature:"Lake District",
+lat:51.5074,
+lng:-0.1278
+},
+
+{
+name:"Japonya",
+emoji:"🇯🇵",
+country:"Asya",
+region:"Doğu Asya",
+description:"Teknoloji, geleneksel kültür ve doğal güzellikleri bir arada bulundurur.",
+places:"Tokyo, Kyoto, Osaka",
+nature:"Fuji Dağı",
+lat:35.6762,
+lng:139.6503
+},
+
+{
+name:"Amerika Birleşik Devletleri",
+emoji:"🇺🇸",
+country:"Kuzey Amerika",
+region:"Kuzey Amerika",
+description:"New York, Los Angeles ve birçok doğal parkıyla çok geniş bir ülkedir.",
+places:"New York, Los Angeles, Washington",
+nature:"Grand Canyon",
+lat:38.9072,
+lng:-77.0369
+},
+
+{
+name:"Kanada",
+emoji:"🇨🇦",
+country:"Kuzey Amerika",
+region:"Kuzey Amerika",
+description:"Geniş ormanları, gölleri ve doğal alanlarıyla ünlüdür.",
+places:"Toronto, Vancouver, Montreal",
+nature:"Rocky Dağları",
+lat:45.4215,
+lng:-75.6972
+},
+
+{
+name:"İngiltere",
+emoji:"🇬🇧",
+country:"Avrupa",
+region:"Batı Avrupa",
+description:"Londra başta olmak üzere tarihi şehirleriyle ünlüdür.",
+places:"Londra, Manchester, Liverpool",
+nature:"Lake District",
+lat:51.5074,
+lng:-0.1278
+},
+
+{
+name:"Yunanistan",
+emoji:"🇬🇷",
+country:"Avrupa",
+region:"Güney Avrupa",
+description:"Antik tarihi, adaları ve Akdeniz kıyılarıyla ünlüdür.",
+places:"Atina, Santorini, Selanik",
+nature:"Ege Denizi",
+lat:37.9838,
+lng:23.7275
+},
+
+{
+name:"Norveç",
+emoji:"🇳🇴",
+country:"Avrupa",
+region:"Kuzey Avrupa",
+description:"Fiyortları ve kuzey ışıklarıyla tanınır.",
+places:"Oslo, Bergen, Tromsø",
+nature:"Norveç fiyortları",
+lat:59.9139,
+lng:10.7522
+},
+
+{
+name:"İsveç",
+emoji:"🇸🇪",
+country:"Avrupa",
+region:"Kuzey Avrupa",
+description:"Ormanları, gölleri ve modern şehirleriyle tanınır.",
+places:"Stockholm, Göteborg",
+nature:"İsveç ormanları",
+lat:59.3293,
+lng:18.0686
+},
+
+{
+name:"Hollanda",
+emoji:"🇳🇱",
+country:"Avrupa",
+region:"Batı Avrupa",
+description:"Kanalları, bisikletleri ve lale bahçeleriyle ünlüdür.",
+places:"Amsterdam, Rotterdam",
+nature:"Keukenhof",
+lat:52.3676,
+lng:4.9041
+},
+
+{
+name:"Avusturya",
+emoji:"🇦🇹",
+country:"Avrupa",
+region:"Orta Avrupa",
+description:"Alpleri, tarihi şehirleri ve klasik müziğiyle tanınır.",
+places:"Viyana, Salzburg, Innsbruck",
+nature:"Avusturya Alpleri",
+lat:48.2082,
+lng:16.3738
+},
+
+{
+name:"Portekiz",
+emoji:"🇵🇹",
+country:"Avrupa",
+region:"Güneybatı Avrupa",
+description:"Atlantik kıyıları ve tarihi şehirleriyle ünlüdür.",
+places:"Lizbon, Porto, Sintra",
+nature:"Algarve",
+lat:38.7223,
+lng:-9.1393
+},
+
+{
+name:"Mısır",
+emoji:"🇪🇬",
+country:"Afrika",
+region:"Kuzey Afrika",
+description:"Piramitleri ve Nil Nehri ile dünyanın en eski medeniyetlerinden birine ev sahipliği yapar.",
+places:"Kahire, Giza Piramitleri, Luksor",
+nature:"Nil Nehri",
+lat:30.0444,
+lng:31.2357
+},
+
+{
+name:"Birleşik Arap Emirlikleri",
+emoji:"🇦🇪",
+country:"Asya",
+region:"Orta Doğu",
+description:"Dubai ve Abu Dabi gibi modern şehirleriyle tanınır.",
+places:"Dubai, Abu Dabi, Burj Khalifa",
+nature:"Arap Çölü",
+lat:25.2048,
+lng:55.2708
+},
+
+{
+name:"Avustralya",
+emoji:"🇦🇺",
+country:"Okyanusya",
+region:"Okyanusya",
+description:"Büyük mercan resifi, geniş çölleri ve modern şehirleriyle tanınır.",
+places:"Sydney, Melbourne, Brisbane",
+nature:"Büyük Set Resifi",
+lat:-33.8688,
+lng:151.2093
+},
+
+{
+name:"Brezilya",
+emoji:"🇧🇷",
+country:"Güney Amerika",
+region:"Güney Amerika",
+description:"Amazon yağmur ormanları ve Rio de Janeiro ile ünlüdür.",
+places:"Rio de Janeiro, São Paulo",
+nature:"Amazon Ormanları",
+lat:-15.7939,
+lng:-47.8828
+},
+
+{
+name:"Güney Kore",
+emoji:"🇰🇷",
+country:"Asya",
+region:"Doğu Asya",
+description:"Teknoloji, popüler kültür ve geleneksel yapılarıyla bilinir.",
+places:"Seul, Busan, Jeju",
+nature:"Jeju Adası",
+lat:37.5665,
+lng:126.978
+},
+
+{
+name:"Çin",
+emoji:"🇨🇳",
+country:"Asya",
+region:"Doğu Asya",
+description:"Çin Seddi ve zengin tarihiyle dünyanın en büyük ülkelerinden biridir.",
+places:"Pekin, Şanghay, Çin Seddi",
+nature:"Zhangjiajie",
+lat:39.9042,
+lng:116.4074
+},
+
+{
+name:"Tayland",
+emoji:"🇹🇭",
+country:"Asya",
+region:"Güneydoğu Asya",
+description:"Tropikal adaları, tapınakları ve kültürüyle tanınır.",
+places:"Bangkok, Phuket, Chiang Mai",
+nature:"Phi Phi Adaları",
+lat:13.7563,
+lng:100.5018
+},
+
+{
+name:"İzlanda",
+emoji:"🇮🇸",
+country:"Avrupa",
+region:"Kuzey Avrupa",
+description:"Volkanları, buzulları ve kuzey ışıklarıyla ünlüdür.",
+places:"Reykjavik, Blue Lagoon",
+nature:"Buzullar ve şelaleler",
+lat:64.1466,
+lng:-21.9426
+}
+
+];
+
+
+/* TÜRKİYE VERİLERİNE TÜR EKLE */
+
+turkiye.forEach(item => {
+    item.type = "turkiye";
+    item.country = "Türkiye";
+});
+
+
+/* DÜNYA VERİLERİNE TÜR EKLE */
+
+dunya.forEach(item => {
+    item.type = "dunya";
+});
+
+
+/* TÜM VERİLER */
+
+const allPlaces = [...turkiye, ...dunya];
+
+
+/* HTML ÖZEL KARAKTERLERİNİ GÜVENLİ HALE GETİR */
+
+function escapeHTML(text) {
+
+    return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+/* KARTLARI OLUŞTUR */
+
+function showCards(list = allPlaces) {
+
+    const cards = document.getElementById("cards");
+    const noResult = document.getElementById("noResult");
+
+    cards.innerHTML = "";
+
+    if (!list || list.length === 0) {
+
+        noResult.style.display = "block";
+
+        return;
+    }
+
+    noResult.style.display = "none";
+
+    list.forEach((place, index) => {
+
+        const card = document.createElement("div");
+
+        card.className = "card";
+
+        card.innerHTML = `
+            <div class="emoji">${escapeHTML(place.emoji)}</div>
+
+            <div class="country">
+                ${escapeHTML(
+                    place.type === "turkiye"
+                    ? "🇹🇷 Türkiye"
+                    : "🌍 " + place.country
+                )}
+            </div>
+
+            <h3>${escapeHTML(place.name)}</h3>
+
+            <p>${escapeHTML(place.description)}</p>
+        `;
+
+        card.addEventListener("click", function() {
+            openDetail(place);
+        });
+
+        cards.appendChild(card);
+
+    });
+
+}
+
+
+/* DETAY AÇ */
+
+function openDetail(place) {
+
+    const detail = document.getElementById("detail");
+    const content = document.getElementById("detailContent");
+
+    const mapURL =
+        "https://www.google.com/maps/search/?api=1&query=" +
+        encodeURIComponent(place.lat + "," + place.lng);
+
+    content.innerHTML = `
+
+        <div class="detail-emoji">
+            ${escapeHTML(place.emoji)}
+        </div>
+
+        <h2>${escapeHTML(place.name)}</h2>
+
+        <div class="info">
+            <strong>🌍 Bölge:</strong>
+            ${escapeHTML(place.region)}
+        </div>
+
+        <div class="info">
+            <strong>📖 Hakkında:</strong><br>
+            ${escapeHTML(place.description)}
+        </div>
+
+        <div class="info">
+            <strong>📍 Gezilecek Yerler:</strong><br>
+            ${escapeHTML(place.places)}
+        </div>
+
+        <div class="info">
+            <strong>🌿 Doğal Güzellik:</strong><br>
+            ${escapeHTML(place.nature)}
+        </div>
+
+        <div class="info">
+            <strong>🧭 Koordinatlar:</strong><br>
+            ${place.lat}, ${place.lng}
+        </div>
+
+        <a
+            class="map-button"
+            href="${mapURL}"
+            target="_blank"
+            rel="noopener"
+        >
+            🗺️ Haritada Görüntüle
+        </a>
+
+    `;
+
+    detail.style.display = "flex";
+
+}
+
+
+/* DETAY KAPAT */
+
+function closeDetail() {
+
+    document.getElementById("detail").style.display = "none";
+
+}
+
+
+/* DIŞARI TIKLAYINCA KAPAT */
+
+document.getElementById("detail").addEventListener("click", function(e) {
+
+    if (e.target === this) {
+        closeDetail();
+    }
+
+});
+
+
+/* ESC İLE KAPAT */
+
+document.addEventListener("keydown", function(e) {
+
+    if (e.key === "Escape") {
+        closeDetail();
+    }
+
+});
+
+
+/* ARAMA */
+
+document.getElementById("search").addEventListener("input", function() {
+
+    const text = this.value
+        .toLocaleLowerCase("tr-TR")
+        .trim();
+
+    if (text === "") {
+
+        showCards(allPlaces);
+
+        return;
+    }
+
+    const results = allPlaces.filter(place => {
+
+        const values = [
+            place.name,
+            place.country,
+            place.region,
+            place.description,
+            place.places,
+            place.nature
+        ];
+
+        return values.some(value =>
+
+            String(value)
+                .toLocaleLowerCase("tr-TR")
+                .includes(text)
+
+        );
+
+    });
+
+    showCards(results);
+
+});
+
+
+/* FİLTRE */
+
+function filterCards(type, button) {
+
+    document.querySelectorAll(".filter-btn")
+        .forEach(btn => btn.classList.remove("active"));
+
+    button.classList.add("active");
+
+    if (type === "all") {
+
+        showCards(allPlaces);
+
+    } else {
+
+        showCards(
+            allPlaces.filter(place => place.type === type)
+        );
+
+    }
+
+}
+
+
+/* SAYFA BAŞLANGIÇ */
+
+showCards(allPlaces);
+
+</script>
+
+</body>
+</html>
